@@ -113,3 +113,208 @@ str2
 
 str3 <- 'Hello world !' # 따옴표 안의 공백도 문자열로 인정
 str3
+
+# 연속 문자 변수 생성
+str4 <- c('a','b','c')
+str4
+
+str5 <- c('Hello!','world','is','good!')
+str5
+
+str1 + 2 # 문자로 된 변수로는 연산할 수 없다.
+
+# ------------------------------------------------------------------------------
+
+''' 함수(Fuction) : 값을 넣으면 특정한 기능을 수행해서 처음과 다른 값을 출력하는 수 '''
+
+## 숫자를 다루는 함수
+x <- c(1,2,3)
+x
+
+mean(x) # 평균함수
+max(x) # 최댓값
+min(x) # 최솟값
+
+## 문자를 다루는 함수
+str5
+
+paste(str5, clooapse = '*') # 별표를 구분자로 str4의 단어들 하나로 합치기
+
+## 함수의 결과로 새로운 변수로 지정
+x_mean <- mean(x)
+x_mean
+
+str5_paste <- paste(str5, collapse = ' ')
+str5_paste
+
+# -----------------------------------------------------------------
+'''패키지(package)
+- 함수나 변수가 여러 개 들어있는 꾸러미
+- 하나의 패키지 안에 다양한 함수가 존재
+- 함수를 사용하려면 패키지 설치를 먼저 선행
+
+  패키지 설치 -> 패키지 로드 -> 패키지 함수 사용
+'''
+
+### ggplot2 패키지 설치, 로드
+install.packages('ggplot2') # 패키지 설치
+library(ggplot2) # 패키지 로드
+
+# ggplot2 함수
+x <- c('a','a','b','c')
+x
+
+# 빈도 그래프 출력
+qplot(x)
+
+# ggplot2 의 mpg 데이터로 그래프 생성
+''' 여러 패키지들은 패키지 안의 함수를 사용해볼 수 있게 예제 데이터를 포함하는 경우가 있다. '''
+
+qplot(data=mpg, x=hwy)
+qplot(data=mpg, x=cty)
+
+# x축 drv(구동방식), y축 hwy(고속도로 연비)
+qplot(data=mpg, x=drv, y=hwy, geom='line') # 선 그래프 형태
+qplot(data=mpg, x=drv, y=hwy, geom='boxplot') # 상자 그림 형태
+qplot(data=mpg, x=drv, y=hwy, geom='boxplot', colour = drv) # 색 구분
+
+# -------------------------------------------------------------------------------
+''' 데이터 프레임(DataFrame)
+  - 열은 속성
+  - 행은 한 사람의 정보
+  - 데이터가 크다 = 행 또는 열이 많다.
+'''
+
+### 시험 성적 데이터 생성
+english <- c(90,80,60,70)
+english
+
+math <- c(50,60,100,20)
+
+df_midterm <- data.frame(english,math)
+df_midterm
+
+# 반을 추가하고 싶은 경우
+class <- c(1,1,2,2)
+df_midterm <- data.frame(english, math, class)
+df_midterm
+
+# 이 학생들의 수학점수 평균
+mean(df_midterm$math) # df_midterm의 math로 평균 산출
+
+''' Q1. 제품 가격 판매량
+        사과  1800  24
+        딸기  1500  38
+        수박  3000  13  -> 해당 표를 데이터 프레임으로 만들어서 출력
+    Q2. 위에서 만든 데이터 프레일을 이용해서 과일 가격 평균, 판매량 평균을 구하시오.
+'''
+
+# Q1.
+sales <- data.frame(fruit = c('사과','딸기', '수박'),
+                    price = c(1800,1500,3000),
+                    volume = c(24,38,13))
+# Q2.
+sales
+mean(sales$price)
+mean(sales$volume)
+
+### 외부 데이터 활용 - 축적된 시험 성적 데이터 불러오기
+install.packages('readxl') # 엑셀 로드 패키지
+library(readxl)
+
+df_exam <- read_excel('excel_exam.xlsx') # 엑셀 파일 불러와서 def_exam 에 해당
+df_exam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
