@@ -225,17 +225,100 @@ library(readxl)
 df_exam <- read_excel('excel_exam.xlsx') # 엑셀 파일 불러와서 def_exam 에 해당
 df_exam
 
+mean(df_exam$math)
+mean(df_exam$english)
+mean(df_exam$science)
+
+### 파일 경로 지정해서 로드하기
+def_exam <- read_excel('C:/abc/excel_exam.xlsx')
+df_exam
+
+### 엑셀 파일의 첫 번째 행이 변수명이 아닌 경우
+df_exam_no <- read_excel('excel_exam_novar.xlsx', col_names = F)
+df_exam_no
+
+### 엑셀 파일에 시트가 여러 개 있는 경우
+df_exam_sheet <- read_excel('excel_exam_sheet.xlsx', sheet=3)
+df_exam_sheet
+
+''' csv 파일 : 쉼표로 값들이 구분된 파일
+- 범용 데이터 형식
+- 값 사이를 쉼표로 구분
+- 용량 작음, 다양한 소프트웨어에 사용
+'''
+
+df_csv_exam <- read.csv('csv_exam.csv')
+df_csv_exam
+
+# -----------------------------------------------------------------------------
+''' 데이터 파악, 다루기 쉽게 수정 '''
+
+'''
+- 데이터 파악 함수
+1. head() : 데이터의 앞 부분 출력
+2. tail() : 데이터의 뒷 부분 출력
+3. view() : 부어 창에서 데이터 확인
+4. dim() : 데이터 차원 출력
+5. str() : 데이터 차원 출력
+6. summary() : 요약 통계량 출력
+'''
+
+# 데이터 준비
+
+exam <- read.csv('csv_exam.csv')
+exam
+
+# head()
+head(exam) # 앞에서부터 6행까지 출력
+head(exam, 10) # 앞에서부터 10행까지 출력
+
+# tail() 
+tail(exam) # 뒤에서부터 6행
+tail(exam, 10) # 뒤에서부터 10행까지 출력
+
+# view()
+View(exam)
+
+# dim()
+dim(exam)
+
+# str()
+str(exam) # int : 정수, num : 실수
+
+# summary()
+summary(exam)
+
+### mpg 데이터 파악
+''' 1999년 ~ 2008년에 EPA 에서 조사해서 발표한 자동차 주요 모델별
+    연비 데이터 -> ggplot2 패키지 안에 존재 '''
+
+# ggplot2 의 mpg 데이터를 데이터 프레임 형태로 불러오기
+mpg <- as.data.frame(ggplot2::mpg)
+
+head(mpg)
+str(mpg)
+summary(mpg)
+
+### 데이터 수정 - 변수명 바꾸기
+# dplyr 패키지 : 전처리 패키지
+install.packages('dplyr')
+library(dplyr)
+
+df_raw <- data.frame(var1 = c(1,2,1),
+                     var2 = c(2,3,2))
+df_raw
+
+''' 데이터의 변수명을 바꾸기 전에 복사본을 생성해야 원본 데이터의
+    손실을 막을 수 있다. '''
+
+df_new <- df_raw # 복사본 생성
+df_new
 
 
-
-
-
-
-
-
-
-
-
+## 변수명 바꾸기 - var2 를 v2 로 수정(중요!)
+df_new <- rename(df_new, v2 = var2) # 새로운 변수명이 = 앞에 오고 기존 변수명이 = 뒤에 온다.
+df_new
+''' rename()에 "새로운 변수명 = 기존변수명" 순서로 입력 '''
 
 
 
