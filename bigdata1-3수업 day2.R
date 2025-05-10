@@ -464,56 +464,142 @@ boxplot(mpg$hwy)
 
 ## 상자 그림 통계치 출력
 boxplot(mpg$hwy)$stats
+'''
+      [,1]
+[1,]   12 -> 최솟값 -> 중앙값 - 1.5IQR 보다 큰 데이터 중 가장 작은 값
+[2,]   18 -> 1사분위수
+[3,]   24 -> 2사분위수
+[4,]   27 -> 3사분위수
+[5,]   37 -> 최댓값 -> 중앙값 + 1.5IQR 보다 작은 데이터 중 가장 큰 값
+
+1.5IQR: 1.5*(3사분위수 - 1사분위수)
+
+'''
+
+## 결측 처리 - 12 ~ 37 벗어나면 이상치로 간주하고 NA 할당
+mpg$hwy <- ifelse(mpg$hwy < 12 | mpg$hwy > 37, NA, mpg$hwy)
+table(is.na(mpg$hwy))
+
+## 결측치 제외하고 분석
+mpg %>% 
+  group_by(drv) %>% 
+  summarise(mean_hwy = mean(hwy, na.rm=T))
+
+# -------------------------------------------------------------------------
+
+''' 그래프
+
+- 2차원 그래프, 3차원 그래프
+- 지도 그래프
+- 네트워크 그래프
+- 모션 차트
+- 인터랙티브 그래프
 
 
+- ggplot2의 레이어 구조 이해
+
+1단계 : 배경 설정(축)
+2단계 : 그래프 추가(잠, 막대, 선 ...)
+3단계 : 설정 추가 (축 범위, 색깔, 표식)
+'''
+
+### 산점도(Scatter plot) : 데이터를 x축과 y축에 점으로 표현한 그래프
+''' 
+나이와 소득처럼 연속된 값으로 된 두 변수의 관계를 표현할 때 사용
+'''
+
+library(ggplot2)
+
+# 1. 배경 설정 - x축 displ (배기량), y축 hwy(고속도로연비) 지정해 배경 생성
+ggplot(data=mpg, aes(x=displ, y=hwy))
+
+# 2. 그래프 - 산점도
+ggplot(data=mpg, aes(x=displ, y=hwy)) + geom_point()
+
+# 3. 축범위 조정하는 설정 추가
+ggplot(data=mpg, aes(x=displ, y=hwy)) +
+  geom_point() +
+  xlim(3,6)
+
+'''
+qplot vs ggplot
+
+qplot : 전처리 단계에 데이터 확인용, 문법 간단, 기능 단수
+ggplot : 최종 보고용, 색 크기 폰트 세부 조작 가능
+'''
+
+### 막대그래프 (Bar chart) : 데이터의 크기를 막대의 길이로 표현한 그래프
+'''
+집단 간 차이를 표현할 때 많이 쓰임
+
+성별 소득 차이 등..
+'''
+
+## 막대 그래프 1 - 평균 막대 그래프
+# 각 집단의 평균값을 막대의 길이로 표현한 그래프
+
+df_mpg <- mpg %>% 
+  group_by(drv) %>% 
+  summarise(mean_hwy = mean(hwy, na.rm = T))
+df_mpg
+
+# 그래프 생성
+ggplot(data = df_mpg, aes(x=drv, y=mean_hwy)) + geom_col()
+
+# 크기 순으로 정렬
+ggplot(data=df_mpg, aes(x=reorder(drv, -mean_hwy), y = mean_hwy)) + geom_col()
+
+## 막대 그래프 2 - 빈도 막대 그래프
+''' 값의 개수(빈도)로 막대의 길이를 표현한 그래프'''
+
+# x축에 범주 변수, y 축에 빈도
+ggplot(data=mpg, aes(x=drv)) + geom_bar()
+
+# x축에 연속 변수, y 축에 빈도
+ggplot(data=mpg, aes(x=hwy)) + geom_bar()
 
 
+'''
+평균 막대 그래프 : 데이터를 요약한 평균표를 먼저 만든 후 평균표를 이용해
+                    그래프 생성 - geom_col()
+빈도 막대 그래프 : 별도로 표를 만들지 않고 원자료를 이용해서 바로
+                      그래프 생성 - geom_bar()
+'''
+
+### 선 그래프(Line chart) : 데이터를 선으로 표현한 그래프
+'''
+시계열 그래프(Time Series chart) : 일정한 시간 간격을 두고 나열된 시계열
+                                    데이터를 선으로 표현한 그래프.
+                                    -> 환율, 주가지수 등 경제 지표가
+                                    시간에 따라 어떻게 변하는지 표현할 때
+                                    사용
+'''
+
+## 시계열 그래프 생성
+ggplot(data=economics, aes(x=date, y=unemploy)) + geom_line()
+
+### 상자 그림 (Box plot) : 데이터 분포(퍼져있는 형태)를 직사각형 상자 모양으로 표현한 그래프
+'''
+분포를 알 수 있기 때문에 평균만 볼 때보다 데이터의 특성을 좀 더 자세히 알 수 있음'''
+
+ggplot(data = mpg, aes(x=drv, y=hwy)) + geom_boxplot()
+
+# --------------------------------------------------------------------------
+
+''' 인터랙티브 그래프 - 움직이는 그래프
+
+사용패키지 : plotly
+'''
+
+### 패키지 설치 & 로드
+install.packages('plotly')
+library(plotly)
+
+# 1. ggplot 으로 그래프 만들기
+p <- ggplot(data=mpg, aes(x=displ, y=hwy, col=drv)) + geom_point()
+
+# 2. 인터랙티브 그래프
+ggplotly(p)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# day2끝
