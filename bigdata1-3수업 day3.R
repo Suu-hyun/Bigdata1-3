@@ -737,6 +737,7 @@ ggplot(data=region_ageg, aes(x=region, y=pct, fill=ageg)) +
 - JAVA 설치 필요
 '''
 
+
 ### 패키지 설피 및 로드
 install.packages('rJava')
 install.packages('memoise')
@@ -754,3 +755,10 @@ extractNoun('대한민국의 영토는 한반도와 그 부속도서로 한다')
 # 다음 주 수업에 완벽히 정리하겠음
 
 # DAY3 끝
+
+# DAY4에 해결완료
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk-11")
+
+install.packages("rJava")
+
+library(KoNLP)
