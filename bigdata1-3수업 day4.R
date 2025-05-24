@@ -504,30 +504,48 @@ str(states_map)
 ggChoropleth(data=crime, # 지도에 표시할 데이터
              aes(fill = Murder, # 색깔로 표현할 변수
                              map_id = state), # 지역 기준 변수
+             map = states_map) # 지도 데이터
+
+# 4. 인터렉티브 적용
+ggChoropleth(data=crime, # 지도에 표시할 데이터
+             aes(fill = Murder, # 색깔로 표현할 변수
+                 map_id = state), # 지역 기준 변수
              map = states_map, # 지도 데이터
              interactive = T) # 인터렉티브 적용
 
-# 4. 인터렉티브 적용
+### 대한민국 지도 시각화
+''' 긱 허브에 올라와 있는 kormaps2014 패키지 사용 '''
+devtools::install_github('cardiomoon/kormaps2014')
 
+library(stringi)
+library(kormaps2014)
 
+# 2014년 한국 행정지도(시도별)
+str(changeCode(kormap1))
+'''
+kormap2 : 2014년 한국 행정지도(시군구별)
+kormap3 : 2014년 한국 행정지도(읍면동별)
+'''
 
+# 2014 년 한국 인구 자료
+str(changeCode(korpop1))
+# changeCode : 한글 인코딩 문제 해결, 특정한 코드 값을 변환하여 지도의 텍스트 정보가 제대로 출력되게 해주는 함수
 
+# 변수명 변경
+korpop1 <- rename(korpop1, pop = 총인구_명, name = 행정구역별_읍면동)
 
+# 2014년 인국 시각화
+library(ggplot2)
+library(maps)
+library(mapproj)
+library(ggiraphExtra)
+ggChoropleth(data = korpop1, aes(fill=pop, map_id = code, tooltip = name),
+             map=kormap1,
+             interactive = T)
 
+# 시도별 결핵 환자 수
+ggChoropleth(data=tbc, aes(fill=NewPts, map_id = code, tooltip=name),
+             map=kormap1,
+             interactive = T)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# day 4 끝
