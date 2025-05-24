@@ -762,3 +762,53 @@ Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk-11")
 install.packages("rJava")
 
 library(KoNLP)
+
+useNIADic()
+
+extractNoun('대한민국의 영토는 한반도와 그 부속도서로 한다')
+
+### 노래 가사 텍스트 마이닝
+txt <- readLines('rose.txt')
+head(txt)
+
+# 1. 특수문자 제거
+install.packages('stringr')
+library(stringr)
+
+txt <- str_replace_all(txt, '\\W', ' ')
+
+# 2. 명사 추출
+nouns <- extractNoun(txt)
+
+# 3. 추출한 명사 list를 문자열 벡터로 변환, 단어별 빈도표 생성
+wordcount <- table(unlist(nouns))
+
+# 4. 데이터 프레임 형태로 변환 -  ? 전처리함수, 시각화
+df_word <- as.data.frame(wordcount, stringsAsFactors = F)
+
+# 5. 변수명 수정
+library(dplyr)
+df_word <- rename(df_word,
+                  word = Var1,
+                  freq = Freq)
+
+# 6. 두 글자 이상 단어만 추출
+df_word <- filter(df_word, word != 1)
+str(df_word$word)
+df_word <- filter(df_word, nchar(word) >= 2)
+str(df_word)
+
+# 7. top 20 추출
+top20 <- df_word %>% 
+  arrange(desc(freq))
+  head(20)
+top20
+
+
+
+
+
+
+
+
+
