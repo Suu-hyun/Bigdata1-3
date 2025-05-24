@@ -425,3 +425,6 @@ top20 <- df_word %>%
   arrange(desc(freq))
   head(20)
 top20
+
+# Koweps_hpc10_2015_beta1.sav 파일은 압축 파일로 저장해둠
+# 수정완료 day 3 마침
