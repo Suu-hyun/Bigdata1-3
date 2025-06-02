@@ -11,10 +11,10 @@ exam %>% filter(class == 1 $ math >= 80)
 # 여러 조건 중 하나 이상 충족
 exam %>%filter(math >= 90 | english >= 90)
 
-2. 필요한 변수만 추출
+2. 필요한 변수만 추출(열만 뽑는다)
 exam %>% select(class, math, english)
 
-3. 정렬
+3. 정렬(기본값은 오름차순)
 exam %>% arrange(math) # 오름차순
 exam %>% arrange(desc(math)) # 내림차순
 
@@ -24,7 +24,7 @@ exam %>% mutate(total = math + english + science)
 5. 집단별로 요약하기
 mpg %>%
   group_by(manufacturer, drv) %>% 
-  summarise(mean_cty = mean(sty))
+  summarise(mean_cty = mean(cty))
 '''  
 
 # ---------------------------------------------------------------------------  
@@ -34,22 +34,22 @@ mpg %>%
 - 한국보건사회연구원 발간
 - 가구의 경제활동을 연구해 정책 지원에 반영할 목적
 - 2006 ~ 2015년까지 전국에서 가구를 선정해 매년 추적 조사
-- 경제활동, 생활시태, 복지욕구 등 수천 개 변수에 대한 정보로 구성
+- 경제활동, 생활실태, 복지욕구 등 수천 개 변수에 대한 정보로 구성
 '''
 
 ### 패키지
-install.packages('foreign')
+install.packages('foreign') # 패키지 설치치
 library(foreign) # spss 파일 로드
-library(dplyr) # 전처리
+library(dplyr) # 전처리 패키지
 library(ggplot2) # 시각화
 library(readxl) # 엑셀 파일 로드
 
-### 데이터 준비
+### 데이터 준비(Koweps 파일, 압축파일임)
 raw_welfare <- read.spss(file = 'Koweps_hpc10_2015_beta1.sav',
-                         to.data.frame = T)
+                         to.data.frame = T) # 데이터 프레임형태로 읽어오겠다
 
 ### 복사본 생성
-welfare <- raw_welfare
+welfare <- raw_welfare # 원본 손실을 막기 위해서 사본을 만듬듬
 
 ### 데이터 검토
 head(welfare)
@@ -95,9 +95,9 @@ table(welfare$s) # 이상치 x
 table(is.na(welfare$s)) # 결측치 없음(False)
 
 # 성별 항목에 이름 부여
-welfare$s <- ifelse(welfare$s == 1, 'male', 'female')
-table(welfare$s)
-qplot(welfare$s)
+welfare$s <- ifelse(welfare$s == 1, 'male', 'female') # 성별에 이름 부여
+table(welfare$s) # 빈도표 확인
+qplot(welfare$s) # 막대그래프 확인
 
 ### 월급 변수 컴토 및 전처리
 class(welfare$income) # numeric
@@ -105,36 +105,35 @@ summary(welfare$income)
 qplot(welfare$income)
 
 # 이상치 확인
-summary(welfare$income)
+summary(welfare$income) # NA확인
 
 # 결측치
-table(is.na(welfare$income))
+table(is.na(welfare$income)) # NA의 빈도확인
 
 ### 성별에 따른 월급 차이 분석
-# 1. 성별 월급 평균표 생성
+# 1. 성별 월급(s_income) 평균표 생성
 s_income <- welfare %>% 
-  filter(!is.na(income)) %>% 
-  group_by(s) %>% 
-  summarise(mean_income = mean(income))
+  filter(!is.na(income)) %>% # 월급 중 NA가 아닌 것만 추출 
+  group_by(s) %>% # 성별로 분류
+  summarise(mean_income = mean(income)) # 월급 평균 통계량 요약표 생성성
 
 s_income
 
 # 2. 그래프 만들기
-ggplot(data = s_income, aes(x=s, y=mean_income)) + geom_col()
+ggplot(data = s_income, aes(x=s, y=mean_income)) + geom_col() # 그래프로 표현
 
 ''' 나이와 월급의 관계 - 몇 살 때 월급을 가장 많이 받을까 ? '''
 
 ### 변수 검토
 class(welfare$birth)
 summary(welfare$birth)
-
 qplot(welfare$birth)
 
 ## 결측치 확인
 table(is.na(welfare$birth))
 
 ### 파생변수 - 나이
-welfare$age <- 2015 - welfare$birth + 1
+welfare$age <- 2015 - welfare$birth + 1 # 당시 자료가 2015년이므로 2015 - 나이 + 1
 summary(welfare$age)
 qplot(welfare$age)
 
@@ -142,8 +141,8 @@ qplot(welfare$age)
 # 1. 나이에 따른 월급 평균표 생성
 age_income <- welfare %>% 
   filter(!is.na(income)) %>% 
-  group_by(age) %>% 
-  summarise(mean_income = mean(income))
+  group_by(age) %>% # 나이로 분류
+  summarise(mean_income = mean(income)) # 월급 평균
 age_income
 
 # 2. 시각화
@@ -152,7 +151,7 @@ ggplot(data = age_income, aes(x=age, y=mean_income)) +geom_line() # 60대부터 
 ''' 연령대에 따른 월급 차이 - 어떤 연령대의 월급이 가장 많을까? '''
 ### 파생변수 - 연령대
 welfare <- welfare %>% 
-  mutate(ageg = ifelse(age < 30, 'young',
+  mutate(ageg = ifelse(age < 30, 'young', # ifelse를 사용해 3가지로 분류
                        ifelse(age<=59, 'middle', 'old')))
 table(welfare$ageg)
 
@@ -207,8 +206,8 @@ class(welfare$code_job) # numeric
 table(welfare$code_job)
 
 # 1. 직업 분류 코드 목록 불러오기 (엑셀)
-library(readxl)
-list_job = read_excel('Koweps_Codebook.xlsx',
+library(readxl) # 패키지 설치
+list_job = read_excel('Koweps_Codebook.xlsx', 
                       col_names = T,
                       sheet = 2)
 head(list_job)
